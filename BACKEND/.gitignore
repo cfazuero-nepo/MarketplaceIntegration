@@ -1,0 +1,12 @@
+# Local settings and credentials
+.env
+.env.*
+!.env.example
+key.json
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/

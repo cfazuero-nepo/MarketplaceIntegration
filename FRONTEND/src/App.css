@@ -1,0 +1,289 @@
+﻿
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333333;
+  background: #f6f7f9;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+/* Main layout */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 48% 52%;
+  min-height: 100vh;
+}
+
+/* Left branding panel */
+
+.brand-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 55px 65px;
+  background: linear-gradient(145deg, #ffffff, #fff1e9);
+  border-top: 5px solid #f05922;
+  border-right: 1px solid #e6e6e6;
+}
+
+.brand-logo img {
+  display: block;
+  width: 230px;
+  max-width: 100%;
+  height: auto;
+}
+
+.brand-content {
+  max-width: 520px;
+}
+
+.eyebrow {
+  color: #f05922;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-content h1 {
+  margin: 20px 0;
+  font-size: clamp(36px, 4vw, 60px);
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+  color: #333333;
+}
+
+.brand-content h1 span {
+  color: #f05922;
+}
+
+.brand-content p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #666666;
+}
+
+.brand-footer {
+  color: #777777;
+  font-size: 12px;
+}
+
+/* Right login panel */
+
+.login-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 45px;
+  background: #f6f7f9;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 430px;
+}
+
+.login-header {
+  margin-bottom: 35px;
+}
+
+.login-header h2 {
+  margin: 12px 0;
+  font-size: 36px;
+  color: #333333;
+}
+
+.login-header p {
+  color: #777777;
+  font-size: 14px;
+}
+
+/* Form */
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container label {
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.login-container input {
+  width: 100%;
+  height: 52px;
+  padding: 0 15px;
+  margin-bottom: 22px;
+  border: 1px solid #dedfe3;
+  border-radius: 9px;
+  background: white;
+  outline: none;
+}
+
+.login-container input:focus {
+  border-color: #f05922;
+  box-shadow: 0 0 0 3px rgba(240, 89, 34, 0.12);
+}
+
+/* Sign-in button */
+
+.primary-button {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 9px;
+  background: #f05922;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #d94d1b;
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Divider */
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 28px 0;
+  color: #999999;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: #dedfe3;
+}
+
+/* Google button */
+
+.gsi-material-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  overflow: hidden;
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 1px solid #747775;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.gsi-material-button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.gsi-material-button-icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+}
+
+.gsi-material-button-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.gsi-material-button-contents {
+  font-weight: 500;
+}
+
+.gsi-material-button-state {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gsi-material-button:hover .gsi-material-button-state {
+  background: #303030;
+  opacity: 0.08;
+}
+
+/* Help and errors */
+
+.login-help {
+  margin-top: 30px;
+  text-align: center;
+  color: #888888;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.error-message {
+  margin: 0 0 18px;
+  padding: 12px;
+  background: #fff0ee;
+  border: 1px solid #ffd5ce;
+  border-radius: 8px;
+  color: #b42318;
+  font-size: 13px;
+}
+
+/* Mobile responsive */
+
+@media (max-width: 850px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    min-height: auto;
+    padding: 25px;
+    border-right: none;
+  }
+
+  .brand-logo img {
+    width: 180px;
+  }
+
+  .brand-content,
+  .brand-footer {
+    display: none;
+  }
+
+  .login-panel {
+    min-height: calc(100vh - 90px);
+    padding: 45px 24px;
+    align-items: flex-start;
+  }
+}

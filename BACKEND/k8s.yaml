@@ -1,0 +1,113 @@
+# Apply with: kubectl apply -f k8s.yaml
+# Create the GCP key secret first (see steps), it is NOT defined here.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: marketplace
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marketplace-config
+  namespace: marketplace
+data:
+  MARKETPLACE_AUDIENCE: "CHANGE_ME_partner-domain.com"
+  MARKETPLACE_PROVIDER_ID: "CHANGE_ME_provider-id"
+  FRONTEND_URL: "https://app.example.com/marketplace/signup"
+  FRONTEND_ORIGIN: "https://app.example.com"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marketplace-api
+  namespace: marketplace
+spec:
+  # Keep at 1 while sessions are stored in memory. Move sessions to Redis
+  # (or a DB) before scaling out, otherwise /session and /approve may hit
+  # a pod that never saw the sign-up POST.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: marketplace-api
+  template:
+    metadata:
+      labels:
+        app: marketplace-api
+    spec:
+      containers:
+        - name: api
+          image: ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/marketplace-api:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: marketplace-config
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/gcp/key.json
+          volumeMounts:
+            - name: gcp-key
+              mountPath: /var/secrets/gcp
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+      volumes:
+        - name: gcp-key
+          secret:
+            secretName: gcp-sa-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: marketplace-api
+  namespace: marketplace
+spec:
+  type: ClusterIP
+  selector:
+    app: marketplace-api
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+# Requires the AWS Load Balancer Controller installed on the cluster.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: marketplace-api
+  namespace: marketplace
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:REGION:ACCOUNT_ID:certificate/CHANGE_ME
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+spec:
+  ingressClassName: alb
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: marketplace-api
+                port:
+                  number: 80

@@ -1,0 +1,5 @@
+# Test-only dependencies. Not installed in the container image.
+-r requirements.txt
+pytest
+httpx
+cryptography
